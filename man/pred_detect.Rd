@@ -40,6 +40,3 @@ predictions$upr  # Upper 95\% CI bounds
 }
 
 }
-\seealso{
-\code{\link{get_spp_model}} for the underlying model
-}

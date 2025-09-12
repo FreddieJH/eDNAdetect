@@ -29,16 +29,14 @@
 #' predictions$upr  # Upper 95% CI bounds
 #' }
 #'
-#' @seealso \code{\link{get_spp_model}} for the underlying model
-#'
 #' @importFrom compositions clr
 #' @export
 pred_detect <- function(reads_vec) {
   n_sample_reads <- rep(sum(reads_vec), times = length(reads_vec))
   reads_clr <- as.numeric(compositions::clr(reads_vec))
 
-  preds_link_spp <- predict(
-    eDNAdetect::species_mod,
+  preds_link_spp <- stats::predict(
+    species_mod,
     newdata = list(
       reads_clr = reads_clr,
       sample_reads = n_sample_reads
@@ -46,7 +44,7 @@ pred_detect <- function(reads_vec) {
     se.fit = TRUE
   )
 
-  link_f_spp <- family(eDNAdetect::species_mod)$linkinv
+  link_f_spp <- stats::family(species_mod)$linkinv
 
   return(list(
     fit = link_f_spp(preds_link_spp$fit),
