@@ -20,7 +20,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' reads <- c(1500, 2000, 0, 0, 750, 3000, 0)
+#' reads <- c(1500, 2000, 0, 0, 750, 3000, 0, 8000)
 #' predictions <- pred_detect(reads)
 #'
 #' # Access results
