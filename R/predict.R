@@ -1,30 +1,3 @@
-#' Get Species Detection Model
-#'
-#' Loads the fitted GLM model for species detection from the package data.
-#' The model is cached after first load for improved performance.
-#'
-#' @param reload Logical. If TRUE, forces reloading of the model from file.
-#'   Default is FALSE.
-#'
-#' @return A fitted GLM object used for species detection predictions.
-#'
-#' @details The model file should be located in the package's extdata directory
-#'   as 'model.rda'. The function will cache the model in memory after first
-#'   load to improve performance on subsequent calls.
-#'
-#' @examples
-#' \dontrun{
-#' model <- get_spp_model()
-#' }
-#'
-#' @export
-get_spp_model <- function() {
-  model_path <- system.file("extdata", "model.rda", package = "eDNAdetect")
-  load(model_path)
-  return(get(ls()[1]))
-}
-
-species_mod <- NULL
 #' Predict Species Detection Probability
 #'
 #' Predicts the probability of species detection based on read counts using
@@ -61,12 +34,11 @@ species_mod <- NULL
 #' @importFrom compositions clr
 #' @export
 pred_detect <- function(reads_vec) {
-  species_mod <- get_spp_model()
   n_sample_reads <- rep(sum(reads_vec), times = length(reads_vec))
   reads_clr <- as.numeric(compositions::clr(reads_vec))
 
   preds_link_spp <- predict(
-    species_mod,
+    eDNAdetect::species_mod,
     newdata = list(
       reads_clr = reads_clr,
       sample_reads = n_sample_reads
@@ -74,7 +46,7 @@ pred_detect <- function(reads_vec) {
     se.fit = TRUE
   )
 
-  link_f_spp <- family(species_mod)$linkinv
+  link_f_spp <- family(eDNAdetect::species_mod)$linkinv
 
   return(list(
     fit = link_f_spp(preds_link_spp$fit),

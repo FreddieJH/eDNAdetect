@@ -5,10 +5,11 @@ species_mod <- glm(
   family = "binomial",
   data = mod_dat_spp
 )
-
-saveRDS(species_mod, "extdata/species_model.rds")
+usethis::use_data(species_mod)
 
 cat(
   "\nModel fit. Object(s) created:\n",
   paste0(c("species_mod"), sep = "\n")
 )
+
+usethis::use_data(species_mod)
