@@ -4,7 +4,7 @@
 \alias{pred_detect}
 \title{Predict Species Detection Probability}
 \usage{
-pred_detect(reads_vec)
+pred_detect(reads_vec, mod, fit_type = c("fit", "upr", "lwr"))
 }
 \arguments{
 \item{reads_vec}{Numeric vector of read counts. Must contain non-negative

@@ -31,24 +31,32 @@
 #'
 #' @importFrom compositions clr
 #' @export
-pred_detect <- function(reads_vec) {
-  n_sample_reads <- rep(sum(reads_vec), times = length(reads_vec))
-  reads_clr <- as.numeric(compositions::clr(reads_vec))
+pred_detect <- function(reads_vec, mod, fit_type = c("fit", "upr", "lwr")) {
+  if (length(fit_type) > 1) {
+    stop(
+      "Please specify your type of fit (Options: model estimate (fit), upper 95% confidence interval (lwr), lower 95% confidence interval (upr))"
+    )
+  }
+  n_assay_reads <- rep(sum(reads_vec), times = length(reads_vec))
+  reads_clr <- as.numeric(compositions::clr(reads_vec + 1))
 
-  preds_link_spp <- stats::predict(
-    species_mod,
+  preds_link <- stats::predict(
+    mod,
     newdata = list(
       reads_clr = reads_clr,
-      sample_reads = n_sample_reads
+      assay_reads = n_assay_reads
     ),
     se.fit = TRUE
   )
 
-  link_f_spp <- stats::family(species_mod)$linkinv
+  link_f_spp <- stats::family(mod)$linkinv
 
-  return(list(
-    fit = link_f_spp(preds_link_spp$fit),
-    lwr = link_f_spp(preds_link_spp$fit - 1.96 * preds_link_spp$se.fit),
-    upr = link_f_spp(preds_link_spp$fit + 1.96 * preds_link_spp$se.fit)
-  ))
+  if (fit_type == "fit") {
+    out <- link_f_spp(preds_link$fit)
+  } else if (fit_type == "lwr") {
+    out <- link_f_spp(preds_link$fit - 1.96 * preds_link$se.fit)
+  } else if (fit_type == "upr") {
+    out <- link_f_spp(preds_link$fit + 1.96 * preds_link$se.fit)
+  }
+  return(out)
 }
