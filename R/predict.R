@@ -31,7 +31,17 @@
 #'
 #' @importFrom compositions clr
 #' @export
-pred_detect <- function(reads_vec, mod, fit_type = c("fit", "upr", "lwr")) {
+pred_detect <- function(
+  reads_vec,
+  mod = NULL,
+  fit_type = c("fit", "upr", "lwr")
+) {
+  if (is.null(mod)) {
+    stop(
+      "Please provide the fitted model object"
+    )
+  }
+
   if (length(fit_type) > 1) {
     stop(
       "Please specify your type of fit (Options: model estimate (fit), upper 95% confidence interval (lwr), lower 95% confidence interval (upr))"
