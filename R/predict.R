@@ -3,7 +3,7 @@
 #' Predicts the probability of species detection based on read counts using
 #' a fitted GLM model. Returns point estimates with confidence intervals.
 #'
-#' @param reads_vec Numeric vector of read counts. Must contain non-negative
+#' @param reads Numeric vector of read counts. Must contain non-negative
 #'   values representing sequencing read counts for different samples or taxa.
 #' @param model_name Model to use - either DORY or DLOOP model
 #' 
@@ -22,7 +22,7 @@
 #' @examples
 #' \dontrun{
 #' reads <- c(1500, 2000, 0, 0, 750, 3000, 0, 8000)
-#' predictions <- pred_detect(reads)
+#' predictions <- predict_detection(reads)
 #'
 #' # Access results
 #' predictions$fit  # Point estimates
@@ -30,12 +30,10 @@
 #' predictions$upr  # Upper 95% CI bounds
 #' }
 #'
-#' @importFrom compositions clr
 #' @export
 predict_detection <- function(
-  reads_vec,
-  model_name,
-  fit_type = c("fit", "upr", "lwr"), 
+  reads,
+  model_name = "DLOOP",
   pseudocount = 25
 ) {
   if (is.null(model_name)) {
@@ -44,36 +42,28 @@ predict_detection <- function(
     )
   }
 
-  if (length(fit_type) > 1) {
-    stop(
-      "Please specify your type of fit (Options: model estimate (fit), upper 95% confidence interval (lwr), lower 95% confidence interval (upr))"
-    )
-  }
   if(model_name == "DORY"){
-      mod <- data("dory_mod", package = "eDNAdetect", envir = environment())
+      mod <- dory_mod
   } else if (model_name == "DLOOP") {
-      mod <- data("dloop_mod", package = "eDNAdetect", envir = environment())
+      mod <- dloop_mod
   }
 
-
-  reads_log <- log(reads_vec + pseudocount)
-
-  preds_link <- stats::predict(
+  preds_link <- suppressWarnings(stats::predict(
     mod,
-    newdata = list(
-      reads_clr = reads_log
+    newdata = data.frame(
+      reads_log = log(reads + pseudocount)
     ),
-    se.fit = TRUE
-  )
+    se.fit = TRUE,
+    re.form = NA
+  ))
 
   link_f_spp <- stats::family(mod)$linkinv
 
-  if (fit_type == "fit") {
-    out <- link_f_spp(preds_link$fit)
-  } else if (fit_type == "lwr") {
-    out <- link_f_spp(preds_link$fit - 1.96 * preds_link$se.fit)
-  } else if (fit_type == "upr") {
-    out <- link_f_spp(preds_link$fit + 1.96 * preds_link$se.fit)
-  }
+
+  out <- list(fit = link_f_spp(preds_link$fit), 
+  lwr = link_f_spp(preds_link$fit - 1.96 * preds_link$se.fit), 
+  upr = link_f_spp(preds_link$fit + 1.96 * preds_link$se.fit))
+
   return(out)
+
 }

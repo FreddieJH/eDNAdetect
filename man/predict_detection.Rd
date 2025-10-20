@@ -4,15 +4,10 @@
 \alias{predict_detection}
 \title{Predict Species Detection Probability}
 \usage{
-predict_detection(
-  reads_vec,
-  model_name,
-  fit_type = c("fit", "upr", "lwr"),
-  pseudocount = 25
-)
+predict_detection(reads, model_name = "DLOOP", pseudocount = 25)
 }
 \arguments{
-\item{reads_vec}{Numeric vector of read counts. Must contain non-negative
+\item{reads}{Numeric vector of read counts. Must contain non-negative
 values representing sequencing read counts for different samples or taxa.}
 
 \item{model_name}{Model to use - either DORY or DLOOP model}
@@ -38,7 +33,7 @@ before back-transformation.
 \examples{
 \dontrun{
 reads <- c(1500, 2000, 0, 0, 750, 3000, 0, 8000)
-predictions <- pred_detect(reads)
+predictions <- predict_detection(reads)
 
 # Access results
 predictions$fit  # Point estimates

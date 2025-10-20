@@ -4,10 +4,12 @@
 \alias{plot_model}
 \title{Plot model fit with confidence intervals and detection zones}
 \usage{
-plot_model(reads_vec, model_name = c("DORY", "DLOOP"))
+plot_model(reads, labels = NULL, model_name = "DLOOP")
 }
 \arguments{
-\item{reads_vec}{Numeric vector of read counts}
+\item{reads}{Numeric vector of read counts}
+
+\item{labels}{Character string vector of the label names}
 
 \item{model_name}{Model to use - either DORY or DLOOP model}
 }
