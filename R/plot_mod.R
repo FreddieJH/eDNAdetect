@@ -78,7 +78,8 @@ plot_model <- function(reads, labels = NULL, model_name = "DLOOP") {
       label = scales::label_percent(),
       limits = c(0, 1)
     ) +
-    ggplot2::labs(x = "Pr(prescence)", y = "Label ID") +
+    ggplot2::labs(x = "Pr(prescence)", 
+  y = NULL) +
     ggplot2::theme_classic(20)
   return(p)
 }
