@@ -6,7 +6,7 @@
 \usage{
 predict_detection(
   reads_vec,
-  model_name = c("DORY", "DLOOP"),
+  model_name,
   fit_type = c("fit", "upr", "lwr"),
   pseudocount = 25
 )

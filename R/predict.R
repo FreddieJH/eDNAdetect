@@ -34,13 +34,13 @@
 #' @export
 predict_detection <- function(
   reads_vec,
-  model_name = c("DORY", "DLOOP"),
+  model_name,
   fit_type = c("fit", "upr", "lwr"), 
   pseudocount = 25
 ) {
-  if (is.null(mod)) {
+  if (is.null(model_name)) {
     stop(
-      "Please provide the fitted model object"
+      "Please provide the model to be used; either 'model_name = DORY' or 'model_name = DLOOP'"
     )
   }
 
