@@ -71,7 +71,7 @@ plot_model <- function(reads, labels = NULL, model_name = "DLOOP") {
     ) +
     ggplot2::geom_errorbarh(
       ggplot2::aes(y = id, xmin = lwr, xmax = upr),
-      width = 0.1
+      height = 0.1
     ) +
     ggplot2::geom_point(ggplot2::aes(x = fit, y = id), size = 4) +
     ggplot2::scale_x_continuous(
