@@ -5,7 +5,8 @@
 #'
 #' @param reads_vec Numeric vector of read counts. Must contain non-negative
 #'   values representing sequencing read counts for different samples or taxa.
-#'
+#' @param model_name Model to use - either DORY or DLOOP model
+#' 
 #' @return A list containing:
 #'   \describe{
 #'     \item{fit}{Numeric vector of predicted detection probabilities}
@@ -31,10 +32,11 @@
 #'
 #' @importFrom compositions clr
 #' @export
-pred_detect <- function(
+predict_detection <- function(
   reads_vec,
-  mod = NULL,
-  fit_type = c("fit", "upr", "lwr")
+  model_name = c("DORY", "DLOOP"),
+  fit_type = c("fit", "upr", "lwr"), 
+  pseudocount = 25
 ) {
   if (is.null(mod)) {
     stop(
@@ -47,14 +49,19 @@ pred_detect <- function(
       "Please specify your type of fit (Options: model estimate (fit), upper 95% confidence interval (lwr), lower 95% confidence interval (upr))"
     )
   }
-  n_assay_reads <- rep(sum(reads_vec), times = length(reads_vec))
-  reads_clr <- as.numeric(compositions::clr(reads_vec + 1))
+  if(model_name == "DORY"){
+      mod <- data("dory_mod", package = "eDNAdetect", envir = environment())
+  } else if (model_name == "DLOOP") {
+      mod <- data("dloop_mod", package = "eDNAdetect", envir = environment())
+  }
+
+
+  reads_log <- log(reads_vec + pseudocount)
 
   preds_link <- stats::predict(
     mod,
     newdata = list(
-      reads_clr = reads_clr,
-      assay_reads = n_assay_reads
+      reads_clr = reads_log
     ),
     se.fit = TRUE
   )

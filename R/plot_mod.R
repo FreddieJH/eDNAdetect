@@ -1,10 +1,17 @@
 #' Plot model fit with confidence intervals and detection zones
 #'
 #' @param reads_vec Numeric vector of read counts
-#' @param mod Model object for predictions
+#' @param model_name Model to use - either DORY or DLOOP model
 #' @return ggplot2 object
 #' @export
-plot_modfit <- function(reads_vec, mod) {
+plot_model <- function(reads_vec, model_name = c("DORY", "DLOOP")) {
+
+  if(model_name == "DORY"){
+      mod <- data("dory_mod", package = "eDNAdetect", envir = environment())
+  } else if (model_name == "DLOOP") {
+      mod <- data("dloop_mod", package = "eDNAdetect", envir = environment())
+  }
+
   fit_preds <- pred_detect(reads_vec, mod, "fit")
   lwr_preds <- pred_detect(reads_vec, mod, "lwr")
   upr_preds <- pred_detect(reads_vec, mod, "upr")
@@ -76,117 +83,120 @@ plot_modfit <- function(reads_vec, mod) {
   return(p)
 }
 
-# p_basic <- plot_modfit(
+
+# basic_reads <- c(1, 1000, 100, 10000)
+
+# p_basic <- plot_model(
 #   reads_vec = basic_reads,
-#   mod = dory_mod
+#   model_name = "DLOOP"
 # ) +
 #   ggplot2::ggtitle("Basic scenario")
 
-# p_basic_m10 <- plot_modfit(
+# p_basic_m10 <- plot_model(
 #   reads_vec = basic_reads * 10,
-#   mod = dory_mod
+#   model_name = "DLOOP"
 # ) +
 #   ggplot2::ggtitle("All samples x10")
 # patchwork::wrap_plots(p_basic, p_basic_m10, ncol = 1)
 
-# p_basic_m100 <- plot_modfit(
+# p_basic_m100 <- plot_model(
 #   reads_vec = basic_reads * 100,
-#   mod = dory_mod
+#   model_name = "DLOOP"
 # ) +
 #   ggplot2::ggtitle("All samples x100")
 # patchwork::wrap_plots(p_basic, p_basic_m100, ncol = 1)
 
-# p_basic_m1000 <- plot_modfit(
+# p_basic_m1000 <- plot_model(
 #   reads_vec = basic_reads * 1000,
-#   mod = dory_mod
+#   model_name = "DLOOP"
 # ) +
 #   ggplot2::ggtitle("All samples x1000")
 # patchwork::wrap_plots(p_basic, p_basic_m1000, ncol = 1)
 
-# p_basic_addpos <- plot_modfit(
+# p_basic_addpos <- plot_model(
 #   reads_vec = c(basic_reads, 100, 1000, 100),
-#   mod = dory_mod
+#   model_name = "DLOOP"
 # ) +
 #   ggplot2::ggtitle("Basic scenario + additional postive labels")
 # patchwork::wrap_plots(p_basic, p_basic_addpos, ncol = 1)
 
-# p_basic_addzeros <- plot_modfit(
+# p_basic_addzeros <- plot_model(
 #   reads_vec = c(basic_reads, 0, 0, 0, 0),
-#   mod = dory_mod
+#   model_name = "DLOOP"
 # ) +
 #   ggplot2::ggtitle("Basic scenario + additional zero labels")
 # patchwork::wrap_plots(p_basic, p_basic_addzeros, ncol = 1)
 
-# p_basic_addextreme <- plot_modfit(
+# p_basic_addextreme <- plot_model(
 #   reads_vec = c(basic_reads, 10000000),
-#   mod = dory_mod
+#   model_name = "DLOOP"
 # ) +
 #   ggplot2::ggtitle("Basic scenario + additional extreme read")
 # patchwork::wrap_plots(p_basic, p_basic_addextreme, ncol = 1)
 
-# p_basic_addmanyextreme <- plot_modfit(
+# p_basic_addmanyextreme <- plot_model(
 #   reads_vec = c(basic_reads, 10000000, 10000000, 10000000),
-#   mod = dory_mod
+#   model_name = "DLOOP"
 # ) +
 #   ggplot2::ggtitle("Basic scenario + additional multiple extreme reads")
 # patchwork::wrap_plots(p_basic, p_basic_addmanyextreme, ncol = 1)
 
 # # DLOOP
-# p_basic <- plot_modfit(
+# p_basic <- plot_model(
 #   reads_vec = basic_reads,
-#   mod = dloop_mod
+#   model_name = "DLOOP"
 # ) +
 #   ggplot2::ggtitle("Basic scenario")
 
-# p_basic_m10 <- plot_modfit(
+# p_basic_m10 <- plot_model(
 #   reads_vec = basic_reads * 10,
 #   mod = dloop
 # ) +
 #   ggplot2::ggtitle("All samples x10")
 
-# p_basic_m100 <- plot_modfit(
+# p_basic_m100 <- plot_model(
 #   reads_vec = basic_reads * 100,
 #   mod = dloop_mod
 # ) +
 #   ggplot2::ggtitle("All samples x100")
 
-# p_basic_m1000 <- plot_modfit(
+# p_basic_m1000 <- plot_model(
 #   reads_vec = basic_reads * 1000,
 #   mod = dloop_mod
 # ) +
 #   ggplot2::ggtitle("All samples x1000")
 
-# p_basic_addpos <- plot_modfit(
+# p_basic_addpos <- plot_model(
 #   reads_vec = c(basic_reads, 100, 1000, 100),
 #   mod = dloop_mod
 # ) +
 #   ggplot2::ggtitle("Basic scenario + additional postive labels")
 # patchwork::wrap_plots(p_basic, p_basic_addpos, ncol = 1)
 
-# p_basic_addzeros <- plot_modfit(
+# p_basic_addzeros <- plot_model(
 #   reads_vec = c(basic_reads, 0, 0, 0, 0),
 #   mod = dloop_mod
 # ) +
 #   ggplot2::ggtitle("Basic scenario + additional zero labels")
 # patchwork::wrap_plots(p_basic, p_basic_addzeros, ncol = 1)
 
-# p_basic_addextreme <- plot_modfit(
+# p_basic_addextreme <- plot_model(
 #   reads_vec = c(basic_reads, 10000000),
 #   mod = dloop_mod
 # ) +
 #   ggplot2::ggtitle("Basic scenario + additional extreme read")
 # patchwork::wrap_plots(p_basic, p_basic_addextreme, ncol = 1)
 
-# p_basic_addmanyextreme <- plot_modfit(
+# p_basic_addmanyextreme <- plot_model(
 #   reads_vec = c(basic_reads, 10000000, 10000000, 10000000),
 #   mod = dloop_mod
 # ) +
 #   ggplot2::ggtitle("Basic scenario + additional multiple extreme reads")
 # patchwork::wrap_plots(p_basic, p_basic_addmanyextreme, ncol = 1)
 
-# plot_modfit(
+# plot_model(
 #   reads_vec = c(0, 0, 0, 100000, 0, 0),
 #   mod = dloop_mod
 # ) +
 #   ggplot2::ggtitle("extreme reads")
-# compositions::clr(c(0, 0, 0, 100000, 0, 0) + 1)
+#   log(c(0, 0, 0, 100000, 0, 0) + 25)

@@ -5,5 +5,9 @@
 .DS_Store
 .quarto
 *.csv
+*.pdf
+outline.*
 
 data-raw/
+/.quarto/
+**/*.quarto_ipynb
