@@ -1,0 +1,92 @@
+
+Given x reads of an OTU from a sample, we want to know the probability that it is was reported as catch (true presencem measured as a 0 or 1). For this we initially think of binomial regression model, however we cannot simply use the number of reads as the predictor variable. This is because the number of reads is dependant on the output of the PCR. Sometimes we get many reads and we can trust the data more, other times we get fewer total reads from the sample and cannot trust it as much. We therefore must consider the total sample reads when we consider the number of reads. 
+
+We are dealing with compositional data. This is very improtant to consider. This means that the data (number of reads) within a sample are not independant, and must be considered in the context of the whole sample. 
+
+For example, say we have three OTUs reads, [100, 1000, 900], the proportions of this sample is [0.05, 0.5, 0.45], if we add in another OTU read then we can completely change the proportions [100, 1000, 900, 1000], there proportions become, [0.025, 0.25, 0.225, 0.25]. The proportion of the second OTU in the sample has decreased from 50% to 25% of the total sample reads. 
+
+One way to deal with compositional data is to consider it in terms of log-ratio. One very common transformation is the centered log ratio transformation. For the sample [100, 1000, 900], the CLR is [-1.5, 0.8, 0.67], now if we add in an additional read, [100, 1000, 900, 1000], the CLR transformation is [-1.7, 0.6, 0.49, 0.6]. This transfomation at least conserved the relative distances between numbers. 
+
+```{r}
+
+r <- c(100, 1000, 900)
+as.numeric(compositions::clr(r))
+
+r2 <- c(100, 1000, 900, 1000)
+as.numeric(compositions::clr(r2))
+
+```
+
+However there are two issues with the CLR transformation, firstly it cannot handle zeros. It returns a zero when a zero is input, this would suggest that the zero count has a higher CLR than a realtive low count
+
+```{r}
+
+r <- c(100, 1000, 900, 0)
+as.numeric(compositions::clr(r))
+
+r2 <- c(100, 1000, 900, 1)
+as.numeric(compositions::clr(r2))
+
+```
+
+We can overcome this by adding a small number to all the zero counts. 
+
+```{r}
+
+r <- c(100, 1000, 900, 0)
+as.numeric(compositions::clr(r + 500))
+
+r2 <- c(100, 1000, 900, 1)
+as.numeric(compositions::clr(r2 + 500))
+
+```
+
+This however introduces it's own biases, skewing the data. When we include a very small number we are changing the relationship between the numbers. Adding a larger number results in less of an impact.
+
+```{r}
+
+r <- c(100, 100000, 900, 0)
+as.numeric(compositions::clr(r + 500))
+
+r2 <- c(100, 100000, 900, 1)
+as.numeric(compositions::clr(r2 + 500))
+
+```
+
+Or we use a multiplicative pseudocount: 
+
+```{r}
+
+clr2 <- function(otu_counts) {
+  min_nonzero <- min(otu_counts[otu_counts > 0])
+  pseudocount <- 0.01 * min_nonzero
+
+  as.numeric(compositions::clr(otu_counts + pseudocount))
+}
+
+r <- c(100, 100000, 900, 0)
+as.numeric(clr2(r))
+
+r2 <- c(100, 100000, 900, 1)
+as.numeric(clr2(r2))
+
+
+```
+
+```{r}
+
+r <- c(100, 1000, 900, 0)
+as.numeric(compositions::clr(r + 1))
+
+r2 <- c(100, 1000, 900, 1)
+as.numeric(compositions::clr(r2 + 1))
+
+```
+
+- PCR is more effcient for the TUNa species
+- PCR might be more efficient for the specific species
+- random var of shredding rate
+- abacares and obesus are very similar genetically: often pop up together
+- mock community works really well - no unknown reads
+- 28th get a notes
+- check for contamination between holds of the same boat
