@@ -1,4 +1,3 @@
-library(wesanderson)
 library(tidybayes)
 library(dplyr)
 
@@ -12,8 +11,6 @@ if (!file.exists("data/dloop_brms.rda")) {
 
 load("data/dory_brms.rda")
 load("data/dloop_brms.rda")
-
-mypal <- wes_palette("Zissou1")
 
 pred_detect <- function(reads_vec, model, ci) {
   ci_lwr <- (1 - ci) / 2

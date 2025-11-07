@@ -9,7 +9,7 @@ detection_conf_cols = c(
 
 
 mod_dat_dloop_withPreds <-
-  mod_dat_dloop |>
+  modeldata_dloop |>
   dplyr::mutate(
     mod_fit = as.numeric(
       predict(
@@ -40,7 +40,7 @@ mod_dat_dloop_withPreds <-
 
 
 mod_dat_dory_withPreds <-
-  mod_dat_dory |>
+  modeldata_dory |>
   dplyr::mutate(
     mod_fit = as.numeric(
       predict(

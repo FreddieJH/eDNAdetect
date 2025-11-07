@@ -1,5 +1,6 @@
 library(brms)
 library(readr)
+library(modelr)
 
 if (!file.exists("data-raw/files/cleaned/modeldata_dory.csv")) {
   source("data-raw/02_model_prep.R")
