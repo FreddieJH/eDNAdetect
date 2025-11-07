@@ -28,22 +28,22 @@ modeldata_dloop <- read_csv("data-raw/files/cleaned/modeldata_dloop.csv")
 
 mypal <- wes_palette("Zissou1")
 
-pred_detect <- function(reads_vec, model, ci) {
-  ci_lwr <- (1 - ci) / 2
-  ci_upr <- 1 - ci_lwr
+# pred_detect <- function(reads_vec, model, ci) {
+#   ci_lwr <- (1 - ci) / 2
+#   ci_upr <- 1 - ci_lwr
 
-  epred_draws(
-    dory_brms,
-    newdata = data.frame(reads_log = reads_vec),
-    re_formula = NA
-  ) |>
-    summarise(
-      fit = quantile(.epred, 0.5),
-      lwr = quantile(.epred, ci_lwr),
-      upr = quantile(.epred, ci_upr),
-      .groups = "drop"
-    )
-}
+#   epred_draws(
+#     dory_brms,
+#     newdata = data.frame(reads_log = reads_vec),
+#     re_formula = NA
+#   ) |>
+#     summarise(
+#       fit = quantile(.epred, 0.5),
+#       lwr = quantile(.epred, ci_lwr),
+#       upr = quantile(.epred, ci_upr),
+#       .groups = "drop"
+#     )
+# }
 
 model_vis_dory <-
   pred_detect(seq(3, 13, 0.1), dory_brms, ci = 0.95) |>

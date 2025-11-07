@@ -4,7 +4,7 @@
 \alias{predict_detection}
 \title{Predict Species Detection Probability}
 \usage{
-predict_detection(reads, model_name = "DLOOP", pseudocount = 25)
+predict_detection(reads, model_name = "DLOOP", ci = 0.8, pseudocount = 25)
 }
 \arguments{
 \item{reads}{Numeric vector of read counts. Must contain non-negative

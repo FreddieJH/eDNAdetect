@@ -37,7 +37,7 @@
 #' @import dplyr
 #' @import tidyr
 #' @export
-plot_stacked_bars <- function(data, proportions = TRUE, sample_col = NULL) {
+plot_reads <- function(data, proportions = TRUE, sample_col = NULL) {
   # Get sample column name
   if (is.null(sample_col)) {
     sample_col <- colnames(data)[1]

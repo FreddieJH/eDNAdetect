@@ -6,15 +6,15 @@
 #' @return ggplot2 object
 #' @export
 plot_model <- function(reads, labels = NULL, model_name = "DLOOP") {
-
   if (!is.null(labels)) {
-    if(length(labels) != length(reads)){
-      stop("The length of the 'reads' vector must be the same length as the 'labels' vector")
+    if (length(labels) != length(reads)) {
+      stop(
+        "The length of the 'reads' vector must be the same length as the 'labels' vector"
+      )
     }
   }
 
   model_preds <- predict_detection(reads, model_name)
-
 
   detection_conf_cols = c(
     "No detection" = "grey70",
@@ -78,12 +78,10 @@ plot_model <- function(reads, labels = NULL, model_name = "DLOOP") {
       label = scales::label_percent(),
       limits = c(0, 1)
     ) +
-    ggplot2::labs(x = "Pr(prescence)", 
-  y = NULL) +
+    ggplot2::labs(x = "Pr(prescence)", y = NULL) +
     ggplot2::theme_classic(20)
   return(p)
 }
-
 
 # basic_reads <- c(1, 1000, 100, 10000)
 

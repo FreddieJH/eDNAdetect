@@ -6,7 +6,7 @@
 #' @param reads Numeric vector of read counts. Must contain non-negative
 #'   values representing sequencing read counts for different samples or taxa.
 #' @param model_name Model to use - either DORY or DLOOP model
-#' 
+#'
 #' @return A list containing:
 #'   \describe{
 #'     \item{fit}{Numeric vector of predicted detection probabilities}
@@ -34,6 +34,7 @@
 predict_detection <- function(
   reads,
   model_name = "DLOOP",
+  ci = 0.8,
   pseudocount = 25
 ) {
   if (is.null(model_name)) {
@@ -42,28 +43,43 @@ predict_detection <- function(
     )
   }
 
-  if(model_name == "DORY"){
-      mod <- dory_mod
-  } else if (model_name == "DLOOP") {
-      mod <- dloop_mod
+  if (class(reads) != "numeric") {
+    stop(
+      "The 'reads' argument must be a numeric value or vector."
+    )
   }
 
-  preds_link <- suppressWarnings(stats::predict(
-    mod,
-    newdata = data.frame(
-      reads_log = log(reads + pseudocount)
-    ),
-    se.fit = TRUE,
-    re.form = NA
-  ))
+  if (!is.numeric(ci) || ci < 0 || ci > 1) {
+    stop("Credible Interval (ci) must be a numeric value between 0 and 1.")
+  }
 
-  link_f_spp <- stats::family(mod)$linkinv
+  if (model_name == "DORY") {
+    mod <- dory_brms
+  } else if (model_name == "DLOOP") {
+    mod <- dloop_brms
+  }
 
+  ci_lwr <- (1 - ci) / 2
+  ci_upr <- 1 - ci_lwr
 
-  out <- list(fit = link_f_spp(preds_link$fit), 
-  lwr = link_f_spp(preds_link$fit - 1.96 * preds_link$se.fit), 
-  upr = link_f_spp(preds_link$fit + 1.96 * preds_link$se.fit))
+  predication_table <-
+    epred_draws(
+      dory_brms,
+      newdata = data.frame(reads_log = log(reads + pseudocount)),
+      re_formula = NA
+    ) |>
+    summarise(
+      fit = quantile(.epred, 0.5),
+      lwr = quantile(.epred, ci_lwr),
+      upr = quantile(.epred, ci_upr),
+      .groups = "drop"
+    )
+
+  out <- list(
+    fit = predication_table$fit,
+    lwr = predication_table$lwr,
+    upr = predication_table$upr
+  )
 
   return(out)
-
 }
